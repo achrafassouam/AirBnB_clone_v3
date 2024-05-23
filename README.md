@@ -151,17 +151,21 @@ No known bugs at this time.
 
 ## Authors
 
-###### Version 2 ( RESTful API )
+###### Version 3 ( RESTful API )
 
 - Achraf Assouam - [Github](https://github.com/achrafassouam)
 - El Mehdi Azghoul - [Github](https://github.com/ElMehdiAzghoul08)
 
+
+###### Version 2
+
+- Joann Vuong
 
 ###### Version 1
 
 - Alexa Orrico - [Github](https://github.com/alexaorrico) / [Twitter](https://twitter.com/alexa_orrico)  
 - Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://twitter.com/earthtojhuang)
 
-Second part of Airbnb: Joann Vuong
+
 ## License
 Public Domain. No copy write protection. 
