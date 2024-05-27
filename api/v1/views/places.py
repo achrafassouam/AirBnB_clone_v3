@@ -104,36 +104,38 @@ def update_place(place_id):
         """
         Retrieves all Place objects based on the JSON body request
         """
-        if not request.get_json():
-            abort(400, 'Not a JSON')
-
-        data = request.get_json()
-        states = data.get('states', [])
-        cities = data.get('cities', [])
-        amenities = data.get('amenities', [])
-
-        places = []
-        if not states and not cities and not amenities:
-            places = [place.to_dict() for place in storage.all(Place).values()]
+        if request.get_json() is not None:
+            params = request.get_json()
+            states = params.get('states', [])
+            cities = params.get('cities', [])
+            amenities = params.get('amenities', [])
+            amenity_objects = []
+            for amenity_id in amenities:
+                amenity = storage.get('Amenity', amenity_id)
+                if amenity:
+                    amenity_objects.append(amenity)
+            if states == cities == []:
+                places = storage.all('Place').values()
+            else:
+                places = []
+                for state_id in states:
+                    state = storage.get('State', state_id)
+                    state_cities = state.cities
+                    for city in state_cities:
+                        if city.id not in cities:
+                            cities.append(city.id)
+                for city_id in cities:
+                    city = storage.get('City', city_id)
+                    for place in city.places:
+                        places.append(place)
+            confirmed_places = []
+            for place in places:
+                place_amenities = place.amenities
+                confirmed_places.append(place.to_dict())
+                for amenity in amenity_objects:
+                    if amenity not in place_amenities:
+                        confirmed_places.pop()
+                        break
+            return jsonify(confirmed_places)
         else:
-            all_places = storage.all(Place).values()
-
-            if states:
-                state_objs = [storage.get(State, state_id) for state_id in states]
-                for state in state_objs:
-                    if state:
-                        for city in state.cities:
-                            places.extend([place.to_dict() for place in city.places])
-
-            if cities:
-                city_objs = [storage.get(City, city_id) for city_id in cities]
-                for city in city_objs:
-                    if city:
-                        places.extend([place.to_dict() for place in city.places])
-
-            if amenities:
-                amenity_objs = [storage.get(Amenity, amenity_id) for amenity_id in amenities]
-                places = [place.to_dict() for place in all_places
-                        if all(amenity in place.amenities for amenity in amenity_objs)]
-
-        return jsonify(places)
+            return make_response(jsonify({'error': 'Not a JSON'}), 400)
