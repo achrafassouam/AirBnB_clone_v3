@@ -5,6 +5,7 @@ from api.v1.views import app_views
 from flask import abort, jsonify, make_response, request
 from models import storage
 from models.state import State
+import logging
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
@@ -29,13 +30,17 @@ def get_state(state_id):
 @app_views.route('/states/<state_id>', methods=['DELETE'],
                  strict_slashes=False)
 def delete_state(state_id):
-    """deletes a state based on its state_id"""
-    state = storage.get("State", state_id)
-    if state is None:
+    '''Deletes a State object'''
+    all_states = storage.all("State").values()
+    state_obj = [obj.to_dict() for obj in all_states if obj.id == state_id]
+    if state_obj == []:
         abort(404)
-    state.delete()
-    storage.save()
-    return (jsonify({}), '200')
+    state_obj.remove(state_obj[0])
+    for obj in all_states:
+        if obj.id == state_id:
+            storage.delete(obj)
+            storage.save()
+    return jsonify({}), 200
 
 
 @app_views.route('/states/', methods=['POST'], strict_slashes=False)
