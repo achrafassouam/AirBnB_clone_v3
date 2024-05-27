@@ -23,7 +23,7 @@ def get_state(state_id):
     state = storage.get("State", state_id)
     if state is None:
         abort(404)
-    return jsonify(state.to_dict())
+    return (jsonify(state.to_dict()))
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'])
@@ -38,7 +38,7 @@ def delete_state(state_id):
         if obj.id == state_id:
             storage.delete(obj)
             storage.save()
-    return jsonify({}), 200
+    return (jsonify({}), 200)
 
 
 @app_views.route('/states/', methods=['POST'])
@@ -65,4 +65,4 @@ def put_state(state_id):
         if attr not in ['id', 'created_at', 'updated_at']:
             setattr(state, attr, val)
     state.save()
-    return jsonify(state.to_dict())
+    return jsonify(state.to_dict(), 200)
