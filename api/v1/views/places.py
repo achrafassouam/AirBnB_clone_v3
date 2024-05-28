@@ -99,6 +99,7 @@ def update_place(place_id):
     place.save()
     return make_response(jsonify(place.to_dict()), 200)
 
+
 @app_views.route('/places_search', methods=['POST'])
 def places_search():
     """
