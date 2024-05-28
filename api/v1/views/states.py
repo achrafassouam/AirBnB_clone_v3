@@ -62,4 +62,4 @@ def put_state(state_id):
         if attr not in ['id', 'created_at', 'updated_at']:
             setattr(state, attr, val)
     state.save()
-    return jsonify(state.to_dict())
+    return jsonify(state.to_dict(), 200)
